@@ -1,6 +1,7 @@
 import os
 import telebot
 from prompt_loader import load_sys_prompt
+from file_utils import download_file_as_temp, ogg_to_mp3
 from openai import OpenAI
 
 from dotenv import load_dotenv
@@ -39,20 +40,37 @@ def process_audio_report(message):
     file_url = bot.get_file_url(file_id)
     print('[INFO] audio file url: ' + file_url)
 
+    temp_file_path = download_file_as_temp(file_url)
+    print('[INFO] audio file saved to ' + temp_file_path)
+
+    converted_file_path = ogg_to_mp3(temp_file_path)
+    print('[INFO] converted audio file saved to ' + converted_file_path)
+
     transcription = []
     
-    with open(file_url, 'r') as audio_file:
+    with open(converted_file_path, 'rb') as audio_file:
         transcription = open_ai_client.audio.transcriptions.create(
             model="gpt-4o-transcribe", 
             file=audio_file, 
             response_format="text"
         )
     
-    print(transcription)
+    print('[INFO] audio file transcription obtained')
+
+    response = open_ai_client.responses.parse(
+        model='chatgpt-4o-latest',
+        input=[{"role": "system", "content": load_sys_prompt()},
+               {"role": "user", "content": transcription}]
+    )
+
+    bot.send_message(message.chat.id, response.output_text)
+    print('[INFO] message response sent.')
 
 
 def main():
+    print('[INFO] Initializing...')
     bot.polling()
+    print('[INFO] Gracefully Stopped!')
 
 
 if __name__ == '__main__':

@@ -5,6 +5,7 @@ Chatbot de resposta rápida para denúncias de crimes.
 ## Requisitos:
 A execução deste projeto requer:
 - Python 3.13.5
+- ffmpeg no PATH do sistema
 - Chave de API para o Telegram no arquivo .env
 - Chave de API para da OpenAI no arquivo .env
 
