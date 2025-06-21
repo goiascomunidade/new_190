@@ -25,9 +25,9 @@ def get_file_name(file_url):
 
 def ogg_to_mp3(ogg_file_path):
     ogg_file_name = get_file_name(ogg_file_path)
-    print('ogg file name: ', ogg_file_name)
+    print('[INFO] ogg file name: ', ogg_file_name)
     mp3_file_name = ''.join(ogg_file_name.split('.')[:-1]) + '.mp3'
-    print('mp3 file name: ', mp3_file_name)
+    print('[INFO] mp3 file name: ', mp3_file_name)
     audio_segment = AudioSegment.from_ogg(ogg_file_path)
 
     temp_dir = tempfile.gettempdir()
